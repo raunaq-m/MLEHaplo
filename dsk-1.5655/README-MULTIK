@@ -1,0 +1,42 @@
+MULTI-DSK short manual
+
+Installation
+------------
+
+* type `make` then `./multi-dsk` for usage.
+
+Compilation options
+-------------------
+
+* OSX users should compile using `make osx=1`. (Have not tested for OSX, but should work the same ways)
+
+* To use large values of k, e.g. 150, type `make k=150`.
+
+* To enable multi-threading, type `make omp=1` (omp stands for OpenMP).
+
+* Compilation parameters can be stacked, i.e. `make omp=1 k=100 osx=1`
+
+Input
+---------------------
+* File input can be fasta, fastq, gzipped or not.
+
+* File containing list of kmers in decreasing order (one per line) required for program to run. For example, to compute k-mer counts for k-values of 15,35,25,45, and 55.. Specify a file "listofkmers" containing :
+55
+45
+35
+25
+15
+
+i.e. one k-mer per line
+
+* To pass several files as input : create a file with the list of file names (one per line), and pass this file to dsk
+
+Results visualisation
+---------------------
+
+* to see the results as a list of "[kmer] [count]\n", type `python parse_results.py [prefix].solid_kmers_binary`
+
+
+Contact
+-------
+Raunaq Malhotra : raunaq@psu.edu
