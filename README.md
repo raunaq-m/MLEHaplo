@@ -13,7 +13,8 @@ Pre-requisites:
 Step 1: Generate k-mer counts file 
 Command: 
 $ multi-k <fasta/fastq file> <listofkvalues> -d <diskspacelimit> -m <memorylimit>
-# <fasta/fastq file> is the file name of the fasta/fastq file. If there are a list of files, use a text file containing locations of all the files, one file per line. Example if there are two files containing paired reads, file1.fastq and file2.fastq, create a file listofiles.txt containing following:
+
+<fasta/fastq file> is the file name of the fasta/fastq file. If there are a list of files, use a text file containing locations of all the files, one file per line. Example if there are two files containing paired reads, file1.fastq and file2.fastq, create a file listofiles.txt containing following:
 file1.fastq
 file2.fastq
 <listofkvalues> : contains a list of k values for which k-mer counting has to be performed. For example if k-mer counting is desired for k-values 55,45,35,25. Create a file listofkmers.txt containing these numbers in decreasing order:
