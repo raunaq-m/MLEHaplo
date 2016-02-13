@@ -92,7 +92,3 @@ Final viral population generation using MLEtextfileoutput
 
 Command:
 perl extract_MLE.pl -f <pathsfastafile> -l <MLEtextfileoutput>  > "MLEHaplofastaOUTPUT"
-
-
-Status API Training Shop Blog About Pricing
-© 2016 GitHub, Inc. Terms Privacy Se
