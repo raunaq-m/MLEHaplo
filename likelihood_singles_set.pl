@@ -21,15 +21,13 @@ my($desiredsetpaths) = "";
 my($kmer_size) = 60;
 my($genome_length) = 0; 
 %set_paths = ();
-GetOptions( "condgraph=s" => \$cond_graph,
-	    "compset=s" => \$comp_sets,
-	    "pathsfile:s" => \$paths_file,
-	     "kmer:i" => \$kmer_size,
-	     "set=s" => \$desiredsetpaths,
-		 "gl=i" =>\$genome_length,
-	     "back" => \$back,
-		"slow" =>\$slow)  
-	or die("Error in input data \nperl likelihood_singles_set.pl -set DesiredSet -condgraph CondensedGraphFile -compset CompatibleSetFile -pathsfile     ViPRApathsFile  -gl ApproximateGenomeLength -slow -back\n");
+GetOptions( "condgraph=s", \$cond_graph,
+	    "compset=s" ,\$comp_sets,
+	    "pathsfile=s", \$paths_file,
+	     "set=s",\$desiredsetpaths,
+		 "gl=i",\$genome_length
+		);
+die("Error in input data \nperl likelihood_singles_set.pl -set DesiredSet -condgraph CondensedGraphFile -compset CompatibleSetFile -pathsfile ViPRApathsFile  -gl ApproximateGenomeLength \n") if $desiredsetpaths eq "";
 
 main();
 
@@ -46,8 +44,8 @@ sub main
 sub likelihood_subset_backward_elimination
 {
 	# Start by initializing the set of paths to those present in the Desired Set
-	my($current_like) = initialize_hashes();
-	print "$current_like is starting likelihood\n";
+	my($current_like) = initialize_hashes_set();
+#	print "$current_like is starting likelihood\n";
 }
 
 sub backward_elimination_fixed_size
@@ -330,7 +328,15 @@ sub compute_set_likelihood_using_d
 	# print "\n";
 	#print "Max $max and Min $min $t1 $t2 $compatible_set{$t1}{$t2}\n";
 	#print "Likelihood is $llik \n";
-	$percent_pairs_missed = ( $num_pairs_missed/$total_pairs );
+	if($total_pairs !=0)
+	{
+		$percent_pairs_missed = ( $num_pairs_missed/$total_pairs );
+	}
+	else
+	{
+		print "Error: Total pairs of paired k-mers cannot be zero\n";
+		exit(0);
+	}
 	#print "Pairs missed $percent_pairs_missed\n";
 	return $llik;
 }
@@ -354,6 +360,7 @@ sub initialize_hashes_set
 {
 	# Initialize set_paths, d_hashtable and other hashes for the GivenSet of haplotypes
 	open(file,$desiredsetpaths) or die("Error in opening file $desiredsetpaths\n");
+	$line_no = 0;
 	while($l=<file>)
 	{
 		%set_paths = ();
@@ -364,9 +371,12 @@ sub initialize_hashes_set
 			push @{$set_paths{$_}}, @{$allpaths{$_}};
 		}
 		#	Initialize d_hashtable
+		print "Elements in set_paths is ".scalar(keys set_paths)."\n";
+		%d_hashtable = ();
 		compute_d_hashtable_initial();
 		$like_current = compute_set_likelihood_using_d();
-		print "Set $l Likelihood $like_current\n";
+		$line_no++;
+		print "Set on line number $line_no Likelihood $like_current\n";
 	}
 	close file;	
 }

@@ -26,8 +26,10 @@ GetOptions( "condgraph=s" => \$cond_graph,
 	     "kmer:i" => \$kmer_size,
 		 "gl=i" =>\$genome_length,
 	    "random" => \$mode, "back" => \$back,
-		"slow" =>\$slow)  
-	or die("Error in input data \n");
+		"slow" =>\$slow); 
+die("Error in input data \nUSAGE: perl likelihood_singles_wrapper.pl -condgraph CondensedGraphFile -compset CompatibleSetFile -pathsfile ViPRApathsFile  -gl ApproximateGenomeLength -slow -back ") if $cond_graph eq "";
+
+die("Error in input data \nUSAGE: perl likelihood_singles_wrapper.pl -condgraph CondensedGraphFile -compset CompatibleSetFile -pathsfile ViPRApathsFile  -gl ApproximateGenomeLength -slow -back ") if $comp_sets eq "";
 
 load_condensed_graph($cond_graph);
 $count = load_paired_compatibles($comp_sets);
@@ -51,11 +53,6 @@ if($mode)
 #	my(@start_set) = keys %allpaths;
 #	print "Likelihood all ".likelihood_current_set(@start_set)."\n";
 	likelihood_subset_backward_elimination();
-}else
-{
-	$wrfile =~ s/trueset/like_replace.txt/;
-	open(wr,">$wrfile"); 
-	likelihood_subset(14,$iter)
 }
 
 sub likelihood_subset_backward_elimination
@@ -99,7 +96,7 @@ sub backward_elimination_fixed_size
 		if($slow)
 		{
 			$new_like = compute_set_likelihood_using_d();
-			# print "$k $new_like\n";
+			print "$k $new_like\n";
 		}else
 		{
 			$new_like = compute_set_likelihood_using_d_rem($current_like);
