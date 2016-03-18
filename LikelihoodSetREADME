@@ -1,0 +1,31 @@
+For extraction of likelihood of any set of haplotypes:
+Script:likelihood_singles_set.pl
+USAGE: perl likelihood_singles_set.pl -set DesiredSet -condgraph CondensedGraphFile -compset CompatibleSetFile -pathsfile ViPRApathsFile  -gl ApproximateGenomeLength
+
+The DesiredSet is a  text file specifies a collection of sets for which likelihood needs to be computed. Each line defines a separate set. On each line, a list of comma separated haplotype IDs from the pathswritefile are present. 
+
+For eg. if the pathswritefile contains the following 5 haplotypes
+1:6 33 2:7 60 3:13 109 4:19 126 5:27 
+>1_165_1200
+1:6 33 2:7 60 3:13 109 4:19 126 5:27 171 6:33  
+>2_165_1200
+1:6 33 2:7 60 3:13 109 4:19 126 5:27 171 6:33 180 7:34 270  
+>3_165_1200
+1:6 33 2:7 60 3:13 109 4:19 126 5:27 171 6:33 180 7:34 270 8:42 319 
+>4_165_1200
+1:6 33 2:7 60 3:13 109 4:19 126 5:27 171 6:33 180 7:34 270 8:42 319 9:47 335  
+>5_165_1200
+
+
+The Possible entries in DesiredSet file can be :
+1,2,3,4,5
+1,2,3,4
+1,2,3,5
+1,2,4,5
+1,3,4,5
+2,3,4,5
+1,3
+1,4
+1,5
+
+and so on..
