@@ -18,42 +18,43 @@ my($back) = ''; #backward elimination mode
 my($slow) = '';
 my($kmer_size) = 60;
 my($genome_length) = 0; 
-GetOptions( "condgraph=s" => \$cond_graph,
-	    "compset=s" => \$comp_sets,
-	    "pathsfile:s" => \$paths_file,
-	    "trueset:s" => \$truefile,
-	     "iter:i" => \$iter,
-	     "kmer:i" => \$kmer_size,
-		 "gl=i" =>\$genome_length,
-	    "random" => \$mode, "back" => \$back,
+GetOptions( 	"condgraph=s" => \$cond_graph,
+	    	"compset=s" => \$comp_sets,
+		"pathsfile=s" => \$paths_file,
+	     	"kmer:i" => \$kmer_size,
+		"gl=i" =>\$genome_length,
+	   	"back" => \$back,
 		"slow" =>\$slow); 
-die("Error in input data \nUSAGE: perl likelihood_singles_wrapper.pl -condgraph CondensedGraphFile -compset CompatibleSetFile -pathsfile ViPRApathsFile  -gl ApproximateGenomeLength -slow -back ") if $cond_graph eq "";
+die("No condensed graph\nUSAGE: perl likelihood_singles_wrapper.pl -condgraph CondensedGraphFile -compset CompatibleSetFile -pathsfile ViPRApathsFile  -gl ApproximateGenomeLength -slow -back ") if $cond_graph eq "";
+die("No compatible set\nUSAGE: perl likelihood_singles_wrapper.pl -condgraph CondensedGraphFile -compset CompatibleSetFile -pathsfile ViPRApathsFile  -gl ApproximateGenomeLength -slow -back ") if $comp_sets eq "";
+die("No paths file\nUSAGE: perl likelihood_singles_wrapper.pl -condgraph CondensedGraphFile -compset CompatibleSetFile -pathsfile ViPRApathsFile  -gl ApproximateGenomeLength -slow -back ") if $paths_file eq "";
 
-die("Error in input data \nUSAGE: perl likelihood_singles_wrapper.pl -condgraph CondensedGraphFile -compset CompatibleSetFile -pathsfile ViPRApathsFile  -gl ApproximateGenomeLength -slow -back ") if $comp_sets eq "";
-
-load_condensed_graph($cond_graph);
-$count = load_paired_compatibles($comp_sets);
-
-pair_complement_nodes();
-load_all_paths() if $paths_file ne "";  
+##RUN the Main Program
+main();
 
 
-%set_paths = ();
-#print_compatible_set();
-#print "$count loaded ".scalar(keys %cond_graphout)." nodes loaded ".scalar(keys %compatible_set)." compatible set loaded \n";
-if($mode)
-{	
-	$wrfile =~ s/trueset/like_rand.txt/;
-	open(wr,">$wrfile"); 
-	likelihood_subset_random(14,$iter); 
-}elsif($back)
+sub main
 {
-	#print "Estimating backward elimination \n";
-#	print "number of possible haplotypes is ".scalar(keys %allpaths)."\n";
-#	my(@start_set) = keys %allpaths;
-#	print "Likelihood all ".likelihood_current_set(@start_set)."\n";
-	likelihood_subset_backward_elimination();
+	load_condensed_graph($cond_graph);
+	$count = load_paired_compatibles($comp_sets);
+
+	pair_complement_nodes();
+	load_all_paths() if $paths_file ne "";  
+
+
+	%set_paths = ();
+	#print_compatible_set();
+	#print "$count loaded ".scalar(keys %cond_graphout)." nodes loaded ".scalar(keys %compatible_set)." compatible set loaded \n";
+	if($back)
+	{
+		#print "Estimating backward elimination \n";
+	#	print "number of possible haplotypes is ".scalar(keys %allpaths)."\n";
+	#	my(@start_set) = keys %allpaths;
+	#	print "Likelihood all ".likelihood_current_set(@start_set)."\n";
+		likelihood_subset_backward_elimination();
+	}
 }
+
 
 sub likelihood_subset_backward_elimination
 {

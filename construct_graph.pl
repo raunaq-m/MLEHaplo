@@ -4,6 +4,13 @@
 use lib "/i3c/alisa/rom5161/rh6/perl/share/perl5";
 use Graph;
 
+if(scalar(@ARGV)<5)
+{
+	print "Error in Input Arguments\n";
+	print "USAGE:\nperl construct_graph.pl \"fastafile\" \"kmerfile\" \"threshold\" \"graphfile\" \"s\"\n";
+	exit(0);
+}
+
 $g = Graph->new(directed=>1);
 $mode = $ARGV[4];
 $kmer_threshold = $ARGV[2];
@@ -18,8 +25,10 @@ if ($mode eq "s")
 	$kmer_count_file = $ARGV[1];
 	count_kmers_from_kmercounts($kmer_count_file);
 	construct_graph_from_read_file($fasta_file);
-}else 
+}
+else 
 {
+	#### DEPRICATED CODE, Convert the paried fasta file into a single file for analysis. 
 	$fasta_file = $ARGV[0];
 	$kmer_count_file = $ARGV[1];
 	$fasta_file2 = $ARGV[5];
@@ -31,6 +40,7 @@ if ($mode eq "s")
 	print "Creating graph from second paired end file \n";
 	construct_graph_from_read_file($fasta_file2);
 }
+
 $kmerlength = 0;
 %kmer_counts = ();
 

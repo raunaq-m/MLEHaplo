@@ -22,6 +22,10 @@ GetOptions( "fasta:s" =>\$fastafile,
 		"st:i"=>\$store_threshold,
 		"wr:s"=>\$wrfile)
 	or die("Error in command line arguements \n");
+die("USAGE:perl construct_paired_without_bloom.pl -file1 file1.fastq -file2 file2.fastq -paired -kmerfile file1.kvalue -thresh \"number\" -wr \"outputPairedSetfile\"\nOutput is a file that contains pairs of k-mers on a line and the number of times such pair is observed:\nkmer1 kmer2 count\n") if $f1 eq "";
+die("USAGE:perl construct_paired_without_bloom.pl -file1 file1.fastq -file2 file2.fastq -paired -kmerfile file1.kvalue -thresh \"number\" -wr \"outputPairedSetfile\"\nOutput is a file that contains pairs of k-mers on a line and the number of times such pair is observed:\nkmer1 kmer2 count\n") if $f2 eq "";
+die("USAGE:perl construct_paired_without_bloom.pl -file1 file1.fastq -file2 file2.fastq -paired -kmerfile file1.kvalue -thresh \"number\" -wr \"outputPairedSetfile\"\nOutput is a file that contains pairs of k-mers on a line and the number of times such pair is observed:\nkmer1 kmer2 count\n") if $kmerfile eq "";
+
 #######################################################################
 %kmerhash = (); $K=0;
 %pairedinfo = ();
