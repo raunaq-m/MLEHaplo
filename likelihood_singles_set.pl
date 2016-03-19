@@ -483,8 +483,13 @@ sub load_all_paths
 		@arr = split(/ /,$l);
 		$l = <file>;
 		chomp($l);
+		#Paths shortened name is the first part of the ID after the first > on the line 
+		#Eg. >0.900147611391031>14__988, the allpaths hash contains  0.900147611391031>14 is the name
 		($pathno,$t,$length) = split(/_/,substr($l,1));
-			for(my($i)=0;$i<scalar(@arr);$i=$i+2){ 
+		# Modification of pathno to only include the number 14: 
+		$pathno =~ s/.*>//;
+		# print "New pathno is $pathno\n";
+		for(my($i)=0;$i<scalar(@arr);$i=$i+2){ 
 				my($n,$node) = split(/:/,$arr[$i]);
 				push @{$allpaths{$pathno}}, $node;
 			}
