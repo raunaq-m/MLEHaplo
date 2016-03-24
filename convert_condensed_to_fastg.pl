@@ -9,7 +9,7 @@ $kmer_size = 0;
 
 GetOptions("condensed=s",\$condensedgraphfile,"output:s",\$outputfastgfile,"kmer_size=i",\$kmer_size)
 	or die("Error in input arguments, Enter a condensed graph file\n");
-
+die("Error in input arguments, Enter a condensed graph file\nperl convert_condensed_to_fastg.pl -condensed condensedgraphfile -output outputfastgfile\n") if $condensedgraphfile eq "";
 main();
 
 sub loadcondensedgraph

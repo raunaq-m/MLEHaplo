@@ -1,6 +1,7 @@
 # Compute the average coverage of the condensed nodes in the graph 
 # Remove condensed nodes from the graph which consist of the tips of the graph
-# 
+# USAGE: perl process_condensed.pl -f condensedgraph -k kmerfile -t thresholdForTips -ct CoverageThreshold -rem
+#  RemoveTipsOnly -ck CheckFlag  
 use Getopt::Long;
 $condgraph_file = "";
 $kmerfile = "";
@@ -8,14 +9,16 @@ $threshold = 0;
 $coverage_threshold = 35;
 $check = '';
 $remove_tips= '';
-
+$writeoutput ="output.graph";
 GetOptions("f=s",\$condgraph_file,
 			"k=s",\$kmerfile,
 			"t:i",\$threshold,
 			"ct:i",\$coverage_threshold,
 			"rem",\$remove_tips, # remove all nodes below threshold of coverage if this parameter is mentioned
-			"ck",\$check)
+			"ck",\$check,
+			"o:s",\$writeoutput)
 			or die("Error in Input Arguements");
+die("perl process_condensed.pl -f condensedgraph -k kmerfile -t thresholdForTips -ct CoverageThreshold -rem") if $condgraph_file eq "";
 # Variables that will be in use
 %cond_ver_average = ();
 %cond_ver = ();
@@ -37,11 +40,11 @@ sub main
 	loadcondgraph();
 	if(!$remove_tips)
 	{
-		remove_low_coverage_tips($coverage_threshold,1); # 1 if you only want to remove tips/ or anything else if you want to remove all nodes with coverage below converage_threshold
+		remove_low_coverage_tips($coverage_threshold,1); # Set second parameter to 1 if you only want to remove tips/ or anything else if you want to remove all nodes with coverage below converage_threshold
 	}
 	else
 	{
-		remove_low_coverage_tips($coverage_threshold,10); # 1 if you only want to remove tips/ or anything else if you want to remove all nodes with coverage below converage_threshold
+		remove_low_coverage_tips($coverage_threshold,10); # Set second parameter to 10 if you want to remove all nodes with coverage below converage_threshold
 	}
 	if($check)
 	{
@@ -207,9 +210,11 @@ sub remove_low_coverage_tips
 }
 sub update_cond_graph
 {
+	open(wrfile,">$writeoutput") or die ("Cannot write to file $writeoutput\n");
+
 	for $k ( sort {$a <=> $b} keys %cond_ver)
 	{
-		print "$k $cond_ver{$k}\n";
+		print wrfile "$k $cond_ver{$k}\n";
 	}
 	
 	for $k ( keys %cond_graphout)
@@ -220,11 +225,13 @@ sub update_cond_graph
 			{
 				if(exists($cond_ver{$y}))
 				{
-					print "$k $y\n";
+					print wrfile "$k $y\n";
 				}
 			}
 		}
 	}
+	close wrfile;
+	print "Written updated condensed graph to $writeoutput\n";
 }
 
 sub printremovednodesstats
