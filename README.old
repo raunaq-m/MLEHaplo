@@ -90,3 +90,5 @@ Command:
 perl extract_MLE.pl -f <pathsfastafile> -l <MLEtextfileoutput>  > "MLEHaplofastaOUTPUT"
 
 
+
+time perl ../dg_cover_condensed.pl -cg SRR961514_bless.59_150_all.condup.graph -nd SRR961514_bless.59.nodedepth -k SRR961514_bless.59 -t 5 -f 10 -IS 300 -paired ../SRR961514_paired.59.pk.txt > SRR961514_bless.59_150_all.fact10_300_up.txt

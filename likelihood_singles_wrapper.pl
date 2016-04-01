@@ -97,7 +97,7 @@ sub backward_elimination_fixed_size
 		if($slow)
 		{
 			$new_like = compute_set_likelihood_using_d();
-			print "$k $new_like\n";
+			#print "$k $new_like\n";
 		}else
 		{
 			$new_like = compute_set_likelihood_using_d_rem($current_like);

@@ -42,7 +42,8 @@ GetOptions ( "graph=s", \$graph_file, "kmer=s",\$kmerfile, "thresh:i",\$thresh,
 %pred = ();%start=();%finish=(); %depth = ();
 @source_nodes = (); # Hash for ruling out source/sink nodes
 @sink_nodes = ();
-$K=0; # Kmer length on which graph is based 
+$K=0; # Kmer length on which graph is based
+print "Threshold for kmer filtering is $thresh\n"; 
 loadkmerfile($thresh); # load the kmer counts data above the threshold
 loadgraph();  # Create the graph of the reads
 $nokmers = scalar(keys %vertex); #nokmers is the number of vertices in the graph
@@ -113,7 +114,7 @@ sub loadgraph
 			$edges++;
 		}
 #		else { 
-#			print "$kmerhash{$u} $kmerhash{$v} \n";
+#			print "$u $kmerhash{$u} $v $kmerhash{$v} \n";
 #		}
 	}
 	close file;
