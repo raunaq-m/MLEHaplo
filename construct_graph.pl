@@ -121,9 +121,9 @@ sub addkmers_from_read
 			if( ($kmer_counts{$u} > $kmer_threshold |$kmer_counts{$u_r} > $kmer_threshold) && ($kmer_counts{$v} > $kmer_threshold |$kmer_counts{$v_r} > $kmer_threshold) )
 			{
 				if(!$g->has_edge($u,$v)) { print wr_file "$u $v\n"; }
-				#if(!$g->has_edge($v_r,$u_r)) { print wr_file "$v_r $u_r\n"; } # reverse complement kmer 
+				if(!$g->has_edge($v_r,$u_r)) { print wr_file "$v_r $u_r\n"; } # reverse complement kmer 
 				$g->add_edge($u,$v);
-				#$g->add_edge($v_r,$u_r);
+				$g->add_edge($v_r,$u_r);
 			}
 		}
 	}
