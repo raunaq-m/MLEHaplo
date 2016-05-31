@@ -60,7 +60,7 @@ sub likelihood_subset_backward_elimination
 {
 	# Start by initializing the set of all paths as the start set for analysis 	
 	my($current_like) = initialize_hashes();
-	print "$current_like is starting likelihood\n";
+	#print "$current_like is starting likelihood\n";
 	$remove_haps = backward_elimination_fixed_size();
 	$old_like = $temp_like;
 	while($temp_like != -9**9**9) 

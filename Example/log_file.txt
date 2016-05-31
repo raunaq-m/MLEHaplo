@@ -1,0 +1,2 @@
+In fasta file 
+Total pairs stored is 5384612

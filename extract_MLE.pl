@@ -10,7 +10,7 @@ main();
 sub main
 {
 	loadlikelihoodfile();
-	#print "Number of elements is $set_val\n";
+	print "Number of elements is $set_val\n";
 	extract_mle_sequences();
 }
 sub loadlikelihoodfile
@@ -28,7 +28,7 @@ sub loadlikelihoodfile
 			# Number of elements in the MLE set
 		}
 		$id{$vs[2]} = $vs[0];
-		#print "$vs[0] $vs[1] $vs[2] $id{$vs[2]} \n";
+		# print "$vs[0] $vs[1] $vs[2] $id{$vs[2]} \n";
 	}
 	close file;
 }
