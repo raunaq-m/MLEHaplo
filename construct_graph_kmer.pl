@@ -8,11 +8,16 @@ $kmer_1file = "";
 $kmerfile = "";
 $graphwritefile = "";
 $threshold = 0;
-GetOptions("k1=s",\$kmer_1file,"k=s",\$kmerfile,"t:i",\$threshold,"w=s",\$graphwritefile) or die("USAGE:perl construct_graph_kmer.pl -k1 <kmer+1countsfile> -k <kmerfile> -t <threshold> -w <graphwritefile>\n");
+$help = '';
+GetOptions("k1=s",\$kmer_1file,"k=s",\$kmerfile,"t:i",\$threshold,"w=s",\$graphwritefile,"h",\$help) or die("USAGE:perl construct_graph_kmer.pl -k1 <kmer+1countsfile> -k <kmerfile> -t <threshold> -w <graphwritefile>\n");
 
 $kmerlength = 0;
 %kmer_counts = ();
 $g = Graph->new(directed=>1);
+if($help)
+{
+	print "USAGE:perl construct_graph_kmer.pl -k1 <kmer+1countsfile> -k <kmerfile> -t <threshold> -w <graphwritefile>\n";
+}
 main();
 
 sub main
