@@ -17,6 +17,7 @@ $g = Graph->new(directed=>1);
 if($help)
 {
 	print "USAGE:perl construct_graph_kmer.pl -k1 <kmer+1countsfile> -k <kmerfile> -t <threshold> -w <graphwritefile>\n";
+	exit;
 }
 main();
 
