@@ -4,6 +4,7 @@ Maximum Likelihood Estimation for Viral Populations
 VIPRA and MLEHaplo README file
 
 Pre-requisites:
+
 1. multi-dsk: k-mer counting software ( Extension of dsk version 1.5655)
   - Counts k-mers for multiple values of k simultaneously. The software doesn't combines the counts of forward and reverse complement k-mers, as is performed in traditional k-mer counting softwares
 2. perl with modules Bio::Perl, Getopt::Long, Graph.   
@@ -30,7 +31,8 @@ Example:
 For example, if there are two files containing paired reads, `file1.fastq` and `file2.fastq`, create a file `list_of_files.txt` containing following:
 ```
 file1.fastq
-file2.fastq```
+file2.fastq
+```
 
 - **list_of_kvalues** : contains a list of k values for which k-mer counting has to be performed. For example if k-mer counting is desired for k-values 55,45,35,25. Create a file `list_of_kmers.txt` containing these numbers in decreasing order:
 ```
