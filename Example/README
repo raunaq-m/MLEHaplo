@@ -112,7 +112,7 @@ Required input files & Parameters
 
 
 Command: 
-perl likelihood_singles_wrapper.pl -condgraph paired-reads.60.cond.graph -compset paired-reads.60.comp.txt -pathsfile paired-reads.60.fact15.fasta -back -gl 1200 -slow  > paired-reads.60.smxlik.txt
+perl likelihood_singles_wrapper.pl -condgraph paired-reads.60.cond.graph -compset paired-reads.60.comp.txt -pathsfile paired-reads.60.fact15.paths.txt -back -gl 1200 -slow  > paired-reads.60.smxlik.txt
 
 
 Output file : paired-reads.60.smxlik.txt contains the log-likelihood of a set of paths of given size
