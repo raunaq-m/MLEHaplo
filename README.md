@@ -5,7 +5,7 @@ VIPRA and MLEHaplo README file
 
 Pre-requisites:
 
-1. multi-dsk: k-mer counting software ( Extension of dsk version 1.5655)
+1. multi-dsk: k-mer counting software ( Extension of dsk [http://minia.genouest.org/dsk/] version 1.5655)
   - Counts k-mers for multiple values of k simultaneously. The software doesn't combines the counts of forward and reverse complement k-mers, as is performed in traditional k-mer counting softwares
 2. perl with modules Bio::Perl, Getopt::Long, Graph.   
   - BioPerl is available at [http://bioperl.org/](http://bioperl.org/)
@@ -20,7 +20,7 @@ Pre-requisites:
 
 Example:
 ```
-./dsk-1.5655/multi-dsk Example/paired-reads.fasta  Example/listofkmers.txt  -m 8192 -d 10000
+./multi-dsk/multi-dsk Example/paired-reads.fasta  Example/listofkmers.txt  -m 8192 -d 10000
 
 #The command outputs following files:
 #paired-reads.solid_kmers_binary.60
@@ -42,8 +42,8 @@ file2.fastq
 25
 ```
 
-- **diskspace_limit** : defines the limit of temporary disk space used while performing k-mer counting
-- **memory_limit** : defines the memory limit for storage of temporary hashes while performing k-mer counting
+- **diskspace_limit** : defines the limit of temporary disk space (in MB) used while performing k-mer counting
+- **memory_limit** : defines the memory limit (in MB) for storage of temporary hashes while performing k-mer counting
 
 - Output of multi-dsk is a collection of files with extension `prefix.solid_kmers_binary."kvalue"` in compressed format, which contains counts of k-mers present in the fasta/fastq file.
 
@@ -53,7 +53,7 @@ file2.fastq
 
 Example:
 ```
-./dsk-1.5655/parse_results Example/paired-reads.solid_kmers_binary.60 > paired-reads.60
+./multi-dsk/parse_results Example/paired-reads.solid_kmers_binary.60 > paired-reads.60
 ```
 - The file `fasta/fastq_file.kvalue` now contains the k-mer counts for the fasta/fastq file in the format "k-mer count" per line.
 
