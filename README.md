@@ -3,97 +3,172 @@ Maximum Likelihood Estimation for Viral Populations
 
 VIPRA and MLEHaplo README file
 
-Pre-requisites: 
-1. multi-dsk: k-mer counting software ( Extension of dsk version 1.5655) : Counts k-mers for multiple values of k simultaneously. The software doesn't combines the counts of forward and reverse complement k-mers, as is performed in traditional k-mer counting softwares
-2. perl with modules Bio::Perl, Getopt::Long, Graph
+Pre-requisites:
+1. multi-dsk: k-mer counting software ( Extension of dsk version 1.5655)
+  - Counts k-mers for multiple values of k simultaneously. The software doesn't combines the counts of forward and reverse complement k-mers, as is performed in traditional k-mer counting softwares
+2. perl with modules Bio::Perl, Getopt::Long, Graph.   
+  - BioPerl is available at [http://bioperl.org/](http://bioperl.org/)
 
 
-# Preliminaries
+## Preliminaries
 
-Step 1: Generate k-mer counts file 
-Command: 
-$ multi-k "fasta/fastq file" "listofkvalues" -d "diskspacelimit" -m "memorylimit"
+#### Step 1: Generate k-mer counts file
 
-"fasta/fastq file" is the file name of the fasta/fastq file. If there are a list of files, use a text file containing locations of all the files, one file per line. Example if there are two files containing paired reads, file1.fastq and file2.fastq, create a file listofiles.txt containing following:
+
+**Command:** `multi-k fasta/fastq_file list_of_kvalues -d diskspace_limit -m memory_limit`
+
+Example:
+```
+./dsk-1.5655/multi-dsk Example/paired-reads.fasta  Example/listofkmers.txt  -m 8192 -d 10000
+
+#The command outputs following files:
+#paired-reads.solid_kmers_binary.60
+#paired-reads.solid_kmers_binary.61
+```
+
+- **fasta/fastq file**: is the file name of the fasta/fastq file. If there are a list of files, use a text file containing locations of all the files, one file per line.
+For example, if there are two files containing paired reads, `file1.fastq` and `file2.fastq`, create a file `list_of_files.txt` containing following:
+```
 file1.fastq
-file2.fastq
-"listofkvalues" : contains a list of k values for which k-mer counting has to be performed. For example if k-mer counting is desired for k-values 55,45,35,25. Create a file listofkmers.txt containing these numbers in decreasing order:
+file2.fastq```
+
+- **list_of_kvalues** : contains a list of k values for which k-mer counting has to be performed. For example if k-mer counting is desired for k-values 55,45,35,25. Create a file `list_of_kmers.txt` containing these numbers in decreasing order:
+```
 55
 45
 35
 25
-"diskspacelimit" : defines the limit of temporary disk space used while performing k-mer counting
-"memorylimit" : defines the memory limit for storage of temporary hashes while performing k-mer counting 
-Output of multi-dsk is a collection of files with extension ".solid_kmers_binary."kvalue" in compressed format, which contains counts of k-mers present in the fasta/fastq file. 
-Step 2: De-compress the output of multi-dsk
-Command: 
-parse_results ".solid_kmers_binary."kvalue" file"  > "fasta/fastq file.kvalue" 
+```
 
-The file "fasta/fastq file.kvalue" now contains the k-mer counts for the fasta/fastq file in the format "k-mer count" per line.
- 
-Step 3: Generate the De Bruijn graph
-Generating the graph needs two files and a parameter. 
-1. fasta file containing all the reads 
-2. k-mer counts file generated above 
-3. a threshold value for ignoring erroneous k-mers
+- **diskspace_limit** : defines the limit of temporary disk space used while performing k-mer counting
+- **memory_limit** : defines the memory limit for storage of temporary hashes while performing k-mer counting
 
-Command: 
-Combine paired files into a single file 
-perl construct_graph.pl "fastafile" "kmerfile" "threshold" "graphfile" "s"
+- Output of multi-dsk is a collection of files with extension `prefix.solid_kmers_binary."kvalue"` in compressed format, which contains counts of k-mers present in the fasta/fastq file.
 
-Output is the "graphfile" containing pairs of k-mers that form edges in the De Bruijn graph. 
+#### Step 2: De-compress the output of multi-dsk
+**Command:**
+`parse_results prefix.solid_kmers_binary.kvalue_file  > prefix_file.kvalue`
 
-Step 4: Create the paired set file 
+Example:
+```
+./dsk-1.5655/parse_results Example/paired-reads.solid_kmers_binary.60 > paired-reads.60
+```
+- The file `fasta/fastq_file.kvalue` now contains the k-mer counts for the fasta/fastq file in the format "k-mer count" per line.
+
+#### Step 3: Generate the De Bruijn graph
+Generating the graph needs two files and a parameter. This will combine paired files into a single file.
+1. `fasta_file` containing all the reads
+2. `kmer_file` generated above
+3. a `threshold` value for ignoring erroneous k-mers
+
+**Command:**
+`perl construct_graph.pl fasta_file kmer_file threshold graph_file "s"`
+
+Example:
+```
+perl construct_graph.pl  Example/paired-reads.fasta paired-reads.60 0 paired-reads.60.graph "s"
+```
+- **"s"** parameter tells the perl script that there is a single fasta file of reads
+- Output is the `graph_file` containing pairs of k-mers that form edges in the De Bruijn graph.
+
+**TODO:** Add "From (k+1)-mer counts file"
+
+#### Step 4: Create the paired set file
 Create the paired set using the paired reads. It takes as input the two paired files,
-file1.fastq and file2.fastq
-the k-mer counts file,
-file1.kvalue  
-and a threshold for ignoring erroneous k-mers
+`file1.fastq` and `file2.fastq`, the k-mer counts file
+`file1.kvalue`, and a threshold for ignoring erroneous k-mers
 
-Choice of threshold : Dependent on sequencing coverage. Lower threshold includes more erroneous k-mers in the graph, while higher threshold decreases the number of true k-mers and size of the graph. 
+**Command:**
+`perl construct_paired_without_bloom.pl -file1 file1.fastq -file2 file2.fastq -paired -kmerfile file1.kvalue -thresh number -wr output_paired_set_file`
 
-Command:
-perl construct_paired_without_bloom.pl -file1 file1.fastq -file2 file2.fastq -paired -kmerfile file1.kvalue -thresh "number" -wr "outputPairedSetfile" 
-Output is a file that contains pairs of k-mers on a line and the number of times such pair is observed:
-kmer1 kmer2 count
+Example:
+```
+perl construct_paired_without_bloom.pl -fasta Example/paired-reads.fasta -kmerfile paired-reads.60 -thresh 0 -wr paired-reads.60.pk.txt
+```
+
+- Choice of threshold : Dependent on sequencing coverage. Lower threshold includes more erroneous k-mers in the graph, while higher threshold decreases the number of true k-mers and size of the graph.
+
+- Output is a file that contains pairs of k-mers on a line and the number of times such pair is observed:
+`kmer1 kmer2 count`
 
 
-# VIPRA 
+## VIPRA
 
+#### Step A: Running VIPRA
 Running the VIPRA algorithm takes inputs generated above and a parameter for the average insert size, threshold parameter and a value for M (factor) which decides the number of paths to generate per vertex
 
-Command: 
-perl dg_cover.pl -graph "graphfileStep3" -kmer "kmerfileStep2" -paired "PairedSetStep4" -fact "M" -thresh "Threshold" -IS "InsertSize" > outputfile
+**Command:**
+`perl dg_cover.pl -graph graph_file_from_step3 -kmer kmer_file_from_step2 -paired paired_set_from_step4 -fact M -thresh threshold_value -IS insert_size > vipra_output_file`
 
-outputfile contains the paths generated from the graph with high paired end supports
+Example:
+```
+perl dg_cover.pl -graph paired-reads.60.graph -kmer paired-reads.60 -paired paired-reads.60.pk.txt -fact 15 -thresh 0 -IS 400 > paired-reads.60.fact15.txt
+```
+- `graph_file_from_step3` - output_file from [**Step 3: Generate the De Bruijn graph**](#Step-3:-Generate-the-De Bruijn-graph)
+- `kmer_file_from_step2` - output_file from [**Step 2: De-compress the output of multi-dsk**](#Step-2:- De-compress-the-output-of-multi-dsk)
+- `paired_set_from_step4` - output_file from [**Step 4: Create the paired set file**](#Step-4:-Create-the-paired set-file)
 
-Step a: Generate fasta file
+- `vipra_output_file`: Contains the paths generated from the graph with high paired end supports.
+-  `prefix.comp.txt` : Contains a sets of paired vertices in the condensed graph that are compatible with each other based on the paired set.
+-  `prefix.cond.graph` : Contains the condensed version of De Bruijn graph, with non-branching paths condensed to a single vertex.
+
+- Temporary output files:
+  1. `prefix.bubble.txt`: Contains a sets of paired bubbles in the condensed graph that are compatible with each other based on the paired set.
+  2. `prefix.depth` : Contains the depth first search traversal of the graph.
+  3. `prefix.nodedepth` : Temporary file for debugging of code.
+
+
+#### Step B: Generate fasta file
 Extracting fasta file from outputfile
-Command: 
-perl process_dg.pl "outputfile" > pathsfastafile
 
-Output: fasta file of the paths generated by VIPRA
+**Command:**
+`perl process_dg.pl vipra_output_file > paths_fasta_file`
 
-Step b: Generate paths file for maximum likelihood estimation
-Extracting just the paths in terms of nodes in the graph 
-perl get_paths_dgcover.pl -f "outputfile" -w "pathswritefile"
+Example:
+```
+perl process_dg.pl paired-reads.60.fact15.txt > paired-reads.60.fact15.fasta
+```
 
-Output: "pathswritefile"
+- Output: `paths_fasta_file`. The paths generated by VIPRA
 
-# MLEHaplo
-Running MLEHaplo takes as input intermediate files generated by VIPRA and pathswritefile generated in Step b
+#### Step C: Generate paths file for maximum likelihood estimation
+Extracting just the paths in terms of nodes in the graph
 
-Command: 
-perl likelihood_singles_wrapper_parallel.pl -condgraph file1.cond.graph -compset file1.comp.txt -pathsfile "pathswritefile" -back -slow -gl "approximategenomesize"  > "MLEtextfileoutput"
+**Command:**
+`perl get_paths_dgcover.pl -f vipra_output_file -w paths_write_file`
 
-Non Parallel Version Command:
-perl likelihood_singles_wrapper.pl -condgraph file1.cond.graph -compset file1.comp.txt -pathsfile pathswritefile -back -gl approximategenomesize -slow  > MLEtextfileoutput
+Example:
+```
+perl get_paths_dgcover.pl -f paired-reads.60.fact15.txt -w paired-reads.60.fact15.paths.txt
+```
+- Output: `paths_write_file`
 
-the files cond.graph and comp.txt are outputs generated by VIPRA and contain the condensed graph and compatible sets respectively of the De Bruijn graph and PairedSets. 
+## MLEHaplo
+Running MLEHaplo takes as input intermediate files generated by `VIPRA` and `paths_write_file` generated in [Step c](#)
 
-Final viral population generation using MLEtextfileoutput
+**Command:**
+`perl likelihood_singles_wrapper_parallel.pl -condgraph prefix.cond.graph -compset prefix.comp.txt -pathsfile paths_write_file -back -slow -gl approximate_genome_size  > MLE_textfile_output`
 
-Command:
-perl extract_MLE.pl -f "pathsfastafile" -l "MLEtextfileoutput"  > "MLEHaplofastaOUTPUT"
+**Non Parallel Version Command:**
+`perl likelihood_singles_wrapper.pl -condgraph prefix.cond.graph -compset prefix.comp.txt -pathsfile paths_write_file -back -gl approximate_genome_size -slow  > MLE_textfile_output`
+
+Example
+```
+perl likelihood_singles_wrapper.pl -condgraph paired-reads.60.cond.graph -compset paired-reads.60.comp.txt -pathsfile paired-reads.60.fact15.fasta -back -gl 1200 -slow  > paired-reads.60.smxlik.txt
+```
+Required input files & Parameters
+1. `prefix.cond.graph`: Condensed Graph file generated by VIPRA.
+2. `prefix.comp.txt`: Compatible Set generated by VIPRA.
+3. `paths_write_file`: Paths file from ViPRA Step C
+4. `approximate_genome_size`: Approximate genome Length
 
 
+Final viral population generation using `MLEt_extfile_output`
+
+**Command:**
+`perl extract_MLE.pl -f pathsfastafile -l MLEt_extfile_output  > `MLE_Haplo_fasta_OUTPUT`
+
+Example
+```
+perl extract_MLE.pl -f paired-reads.60.fact15.fasta -l paired-reads.60.smxlik.txt > paired-reads.60.MLE.fasta
+```
