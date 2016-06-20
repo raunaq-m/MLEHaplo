@@ -15,6 +15,7 @@ $single_file = -1;
 $M_factor = 15;
 $genome_length = 1200;
 $insert_size = 400; 
+$multiresoutput = "";
 
 ## Threshold for k-mer storage in DE BRUIJN GRAPH 
 $threshold = 0;
@@ -27,34 +28,34 @@ $graphwritefile = "";
 $pairedsetfile = "";
 
 
-GetOptions("fas=s",\$fastafile,"fas1:s",\$fasta_paired1,"fas2:s",\$fasta_paired2,"k=i",\$kmersize,"M=i",\$M_factor,"IS=i",\$insert_size,"GL=i",\$genome_length,"out=s",\$outputfile);
+GetOptions("fas=s",\$fastafile,"fas1:s",\$fasta_paired1,"fas2:s",\$fasta_paired2,"MR:s",\$multiresoutput,"k=i",\$kmersize,"M=i",\$M_factor,"IS=i",\$insert_size,"GL=i",\$genome_length,"out=s",\$outputfile);
 
 main();
 
 sub main
 {
 	parse_args();
+	if($multiresoutput ne "")
+	{
+		print "K-mer counts obtained from output of MultiRes\nUsing file $multiresoutput for k-mer counts\n";
+	}
+	# Run the k-mer counting as before.
 	run_kmer_counting();
-	# Storing of graph 
-	$graphwritefile = $writefiles[0].".graph";
-	generate_de_bruijn_graph($graphwritefile);
+	#Storing the graph
 	# Generating the paired-set file
+	$graphwritefile = $writefiles[0].".graph";
 	$pairedsetfile =  $writefiles[0].".pk.txt";
-	if ($single_file ==1)
+	if($multiresoutput eq "")
 	{
-		print "Generating Paired Set file $pairedsetfile\n";
-		print "Command: perl construct_paired_without_bloom.pl -fasta $fastafile -kmerfile $writefiles[0] -thresh $threshold_paired -wr $pairedsetfile\n";
-		#$cmd = `perl construct_paired_without_bloom.pl -fasta $fastafile -kmerfile $writefiles[0] -thresh $threshold_paired -wr $pairedsetfile`;
-		system("perl construct_paired_without_bloom.pl -fasta $fastafile -kmerfile $writefiles[0] -thresh $threshold_paired -wr $pairedsetfile");
-		print "Paired set generated \n";
+		generate_de_bruijn_graph($writefiles[0],$graphwritefile);
+		generate_paired_set($writefiles[0]);
 	}
-	elsif($single_file ==0) 
+	else
 	{
-		print "Generating Paired Set file from paired fasta files\n";
-		print "Command: perl construct_paired_without_bloom.pl -file1 $fasta_paired1 -file2 $fasta_paired2 -paired -kmerfile $writefiles[0] -thresh $threshold_paired -wr $pairedsetfile\n";
-		system("perl construct_paired_without_bloom.pl -file1 $fasta_paired1 -file2 $fasta_paired2 -paired -kmerfile $writefiles[0] -thresh $threshold_paired -wr $pairedsetfile");
-		print "Paired Set Generated \n";
+		generate_de_bruijn_graph($multiresoutput,$graphwritefile);
+		generate_paired_set($multiresoutput);
 	}
+		
 	# Running ViPRA algorithm 
 	# Input files: graph file 
 	# 			   kmers file 
@@ -63,8 +64,16 @@ sub main
 	$ViPRAoutputfile = $writefiles[0].".fact$M_factor".".txt";
 	# $insert_size = 400;
 	print "Running ViPRA\n";
-	print "Command: perl dg_cover.pl -graph $graphwritefile -kmer $writefiles[0] -paired $pairedsetfile -fact $M_factor -thresh $threshold -IS $insert_size > $ViPRAoutputfile\n";
-	$cmd = `perl dg_cover.pl -graph $graphwritefile -kmer $writefiles[0] -paired $pairedsetfile -fact $M_factor -thresh $threshold -IS $insert_size > $ViPRAoutputfile`;
+	if($multiresoutput eq "")
+	{
+		print "Command: perl dg_cover.pl -graph $graphwritefile -kmer $writefiles[0] -paired $pairedsetfile -fact $M_factor -thresh $threshold -IS $insert_size > $ViPRAoutputfile\n";
+		$cmd = `perl dg_cover.pl -graph $graphwritefile -kmer $writefiles[0] -paired $pairedsetfile -fact $M_factor -thresh $threshold -IS $insert_size > $ViPRAoutputfile`;
+	}
+	else
+	{
+		print "Command: perl dg_cover.pl -graph $graphwritefile -kmer $multiresoutput -paired $pairedsetfile -fact $M_factor -thresh $threshold -IS $insert_size > $ViPRAoutputfile\n";
+		$cmd = `perl dg_cover.pl -graph $graphwritefile -kmer $multiresoutput -paired $pairedsetfile -fact $M_factor -thresh $threshold -IS $insert_size > $ViPRAoutputfile`;
+	}
 	print "ViPRA Execution Done\n";
 	
 	# Parsing output files from ViPRA
@@ -90,16 +99,37 @@ sub main
 	print "Storing Final output in $outputfile\n";
 }
 
+sub generate_paired_set
+{
+	$kmercountsfile = $_[0];
+	if ($single_file ==1)
+	{
+		print "Generating Paired Set file $pairedsetfile\n";
+		print "Command: perl construct_paired_without_bloom.pl -fasta $fastafile -kmerfile $kmercountsfile -thresh $threshold_paired -wr $pairedsetfile\n";
+		#$cmd = `perl construct_paired_without_bloom.pl -fasta $fastafile -kmerfile $kmercountsfile -thresh $threshold_paired -wr $pairedsetfile`;
+		system("perl construct_paired_without_bloom.pl -fasta $fastafile -kmerfile $kmercountsfile -thresh $threshold_paired -wr $pairedsetfile");
+		print "Paired set generated \n";
+	}
+	elsif($single_file ==0) 
+	{
+		print "Generating Paired Set file from paired fasta files\n";
+		print "Command: perl construct_paired_without_bloom.pl -file1 $fasta_paired1 -file2 $fasta_paired2 -paired -kmerfile $kmercountsfile -thresh $threshold_paired -wr $pairedsetfile\n";
+		system("perl construct_paired_without_bloom.pl -file1 $fasta_paired1 -file2 $fasta_paired2 -paired -kmerfile $kmercountsfile -thresh $threshold_paired -wr $pairedsetfile");
+		print "Paired Set Generated \n";
+	}
+}
 
 sub generate_de_bruijn_graph
 {
-	my($output_file) = $_[0];
+	my($kmercountsfile) = $_[0];
+	my($output_file) = $_[1];
 	# Store the output of the graph in the file $output_file
 	print "Generating the De Bruijn graph \n";
-	print "Command:\nperl construct_graph_kmer.pl -k1 $writefiles[1] -k $writefiles[0] -t $threshold -w $output_file\n";
-	$cmd = `perl construct_graph_kmer.pl -k1 $writefiles[1] -k $writefiles[0] -t $threshold -w $output_file`;
+	print "Command:\nperl construct_graph_kmer.pl -k1 $writefiles[1] -k $kmercountsfile -t $threshold -w $output_file\n";
+	$cmd = `perl construct_graph_kmer.pl -k1 $writefiles[1] -k $kmercountsfile -t $threshold -w $output_file`;
 	print "Graph generation done\n";
 }
+
 sub run_kmer_counting
 {
 	if( $single_file ==1)
