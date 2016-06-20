@@ -1,5 +1,5 @@
 # Wrapper main file for MLEHaplo: A Maximum Likelihood Estimation for viral population reconstruction
-# USAGE: perl MLEHaplo.pl -fas <fastafile> -out <mlehaplofile> -k <kmersize> -IS <insert_size> -M <ViPRA M Factor> -GL <genome length>
+# USAGE: perl MLEHaplo.pl -fas <fastafile> -out <mlehaplofile> -k <kmersize> -MR <MultiRes output> -IS <insert_size> -M <ViPRA M Factor> -GL <genome length>
 
 # The program takes as input fasta file and outputs a MLEHaplo predicted output 
 #
@@ -176,7 +176,7 @@ sub parse_args
 	if($fastafile eq "" && $fasta_paired1 eq "")
 	{
 		$single_file = -1;
-		die("Enter at least a fasta file containing the reads or a paired of fasta files\nUSAGE: perl MLEHaplo.pl -fas <fastafile> -out <mlehaplofile> -k <kmersize> -IS <insert_size> -M <ViPRA M Factor> -GL <genome length>\n");
+		die("Enter at least a fasta file containing the reads or a paired of fasta files\nUSAGE: perl MLEHaplo.pl -fas <fastafile> -out <mlehaplofile> -k <kmersize> -MR <MultiRes output> -IS <insert_size> -M <ViPRA M Factor> -GL <genome length>\n");
 	}
 	elsif ($fastafile ne "" )
 	{
@@ -193,7 +193,7 @@ sub parse_args
 	else
 	{
 		$single_file = -1;
-		die("Enter at two paired-end fasta files as follows:\nUSAGE: perl MLEHaplo.pl -fas1 <fasta_file> -fas2 <fasta_file> -k <kmer_size> -out <output_file> -IS <insert_size> -M <ViPRA M Factor> -GL <genome length>\n");
+		die("Enter at two paired-end fasta files as follows:\nUSAGE: perl MLEHaplo.pl -fas1 <fasta_file> -fas2 <fasta_file> -k <kmer_size> -MR <MultiRes output> -out <output_file> -IS <insert_size> -M <ViPRA M Factor> -GL <genome length>\n");
 	}
 	
 	# Setting the file for k-mer counting using MultiDsk. Use the k-mer size given by user and (k+1)
