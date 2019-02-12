@@ -1,4 +1,4 @@
-use lib "/i3c/alisa/rom5161/rh6/perl/lib/perl5";
+# use lib "/Users/raunaq/perl5/lib/perl5/";
 use Bio::SeqIO;
 
 $seqio=Bio::SeqIO->new(-file=>"$ARGV[0]",-format=>"fastq");

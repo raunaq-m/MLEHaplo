@@ -1,7 +1,7 @@
 # Construct the graph from kmer file
 # perl construct_graph.pl <fasta_file> <kmercountsfile> <threshold_forgraph> <graphwritefile>
 #
-use lib "/i3c/alisa/rom5161/rh6/perl/share/perl5";
+# use lib "/Users/raunaq/perl5/lib/perl5/";
 use Graph;
 
 if(scalar(@ARGV)<5)

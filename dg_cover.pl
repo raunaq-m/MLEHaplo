@@ -3,7 +3,7 @@
 
 # usage: perl dominant_path.pl <edge_file> <kmer_counts_file>
 
-use lib "/i3c/alisa/rom5161/rh6/perl/lib/perl5";
+# use lib "/i3c/alisa/rom5161/rh6/perl/lib/perl5";
 use Bio::SeqIO;
 use List::Util qw(shuffle max min);
 use POSIX qw(ceil);
