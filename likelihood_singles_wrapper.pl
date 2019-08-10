@@ -336,10 +336,13 @@ sub compute_set_likelihood_using_d
 					$qij = $d_hashtable{$k1}{$k2}/($Scale-$num_haps*$length_diff{$k1}{$k2}+$num_haps*2);
 					$temp1 = $total_count - $compatible_set{$k1}{$k2};
 					$temp2 = 1 - $qij;
-					#print "$k1 $k2 d_hashtable $d_hashtable{$k1}{$k2} PS $compatible_set{$k1}{$k2} $temp2 $qij\n";
-					$val = $temp1*log($temp2) + $compatible_set{$k1}{$k2} * log($qij);
-					#print "$val \n";
-					$llik += $val;
+					if($temp1 >=0 && $temp2 >=0)
+					{
+						#print "$k1 $k2 d_hashtable $d_hashtable{$k1}{$k2} PS $compatible_set{$k1}{$k2} $temp2 $qij\n";
+						$val = $temp1*log($temp2) + $compatible_set{$k1}{$k2} * log($qij);
+						#print "$val \n";
+						$llik += $val;
+					}
 					$visit_fwd_rev{$k1}{$k2} = 1;
 					#$visit_fwd_rev{$paired_nodes{$k2}}{$paired_nodes{$k1}} = 1;
 				}
