@@ -18,6 +18,7 @@ RUN cpanm Graph
 RUN apt-get install -y libexpat1-dev
 RUN cpanm XML::Parser
 RUN cpanm Bio::SeqIO
+RUN cpanm Getopt::Long
 # RUN cpanm --force Net::SSLeay
 # RUN cpanm IO::Socket::SSL
 # RUN cpanm LWP::Protocol::https
