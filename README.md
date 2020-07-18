@@ -10,6 +10,8 @@ Pre-requisites:
 2. perl with modules Bio::Perl, Getopt::Long, Graph.   
   - BioPerl is available at [http://bioperl.org/](http://bioperl.org/)
 
+# Dockerfile 
+A dockerfile containing all the dependencies is now available. 
 
 ## Preliminaries
 
