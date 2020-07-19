@@ -11,7 +11,22 @@ Pre-requisites:
   - BioPerl is available at [http://bioperl.org/](http://bioperl.org/)
 
 # Dockerfile 
-A dockerfile containing all the dependencies is now available. 
+A dockerfile containing all the dependencies is now available. Find more documenation on Docker [here](https://docs.docker.com/).
+
+To build a docker image, you would need Docker installed in your HPC or cloud environment. Create an empty folder with just the Dockerfile in it and type
+```
+docker build --tag mlehaplo:1.0 . 
+```
+
+This will create the docker container containing all relevant scripts and libraries for you to run MLEHaplo. You can now start a live container by typing: 
+
+```
+docker run -it mlehaplo:1.0
+```
+
+# MLEHaplo workflow 
+
+The following is a list of steps/commands you'd have to follow to run MLEHaplo. 
 
 ## Preliminaries
 
