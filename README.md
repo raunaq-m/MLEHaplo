@@ -181,7 +181,7 @@ perl extract_MLE.pl -f paired-reads.60.fact15.fasta -l paired-reads.60.smxlik.tx
 centroid-based clustering by similarity. A centroid in a cluster is a contig.
 
 **Command:**
-'vsearch --cluster_fast paths_fasta_file --id --centroids cluster_centroid_sequences --consout cluster_consensus_sequences'
+`vsearch --cluster_fast paths_fasta_file --id --centroids cluster_centroid_sequences --consout cluster_consensus_sequences`
 
 Example
 ```
@@ -192,7 +192,7 @@ vsearch --cluster_fast paired-reads.60.fact15.fasta --id 0.995 --centroids paire
 Input: paths reconstructed by ViPRA, or paths after reduced by VSEARCH when taking paths reduced by VSEARCH as input.
 
 **Command:**
-'perl dg_subpath.pl paths_write_file cluster_centroid_sequences new_paths_file'
+`perl dg_subpath.pl paths_write_file cluster_centroid_sequences new_paths_file`
 
 Example
 ```
