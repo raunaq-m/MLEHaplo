@@ -195,7 +195,8 @@ perl extract_MLE.pl -f paired-reads.60.fact15.fasta -l paired-reads.60.smxlik.tx
 ## Error Correction
 Install Karect
 
-karect -correct -inputfile=%s -inputfile=%s -celltype=haploid -matchtype=hamming -aggressive=5.0 -numstages=2 -errorrate=0.25 -errorratesec=0.25 % (args.input_f1, args.input_f2)
+karect -correct -inputfile=*_1.fa -inputfile=*_2.fa -celltype=haploid -matchtype=hamming -aggressive=5.0 -numstages=2 -errorrate=0.25 -errorratesec=0.25 
+
 
 ## VSEARCH clustering
 centroid-based clustering by similarity. A centroid in a cluster is a contig.
